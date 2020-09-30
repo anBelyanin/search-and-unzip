@@ -3,12 +3,19 @@ package unzip.classes;
 import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 public class UnzippingController {
 
     private ZipInputStream zipInputStream;
     private FileOutputStream fileOutputStream;
+
+    private static void printSuccessMessage() {
+        System.out.println("Operation completed");
+    }
+
+    private static void printUnsuccessfulMessage() {
+        System.out.println("Operation not completed");
+    }
 
     public void unzipAllFilesInDirectory(File inputDirectory, String outputDirectory) throws IOException {
         if(inputDirectory.isDirectory()) {
@@ -27,17 +34,16 @@ public class UnzippingController {
         }
     }
 
-    public void unzipFileInDirectory(File zipArchive, String outputDirectory) throws IOException {
+    private void unzipFileInDirectory(File zipArchive, String outputDirectory) throws IOException {
         zipInputStream = new ZipInputStream(new FileInputStream(zipArchive));
         ZipEntry zipEntry;
         while((zipEntry = zipInputStream.getNextEntry()) != null) {
             fileOutputStream = new FileOutputStream(outputDirectory + "Unzipped_" + zipEntry.getName());
-            System.out.println(zipEntry.getName());
             fileOutputStream.write(zipInputStream.readAllBytes());
             fileOutputStream.flush();
             fileOutputStream.close();
         }
         zipInputStream.close();
-
+        UnzippingController.printSuccessMessage();
     }
 }

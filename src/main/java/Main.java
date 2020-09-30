@@ -27,53 +27,70 @@ public class Main {
     public static void main(String[] args) {
 
         consoleReader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Chose action. {-search; -unzip}");
-        try { userInputAction = consoleReader.readLine(); }
-        catch (IOException e) { e.printStackTrace(); }
-
-        if (userInputAction.equals("-search")) {
-            userAction = Actions.SEARCH;
-            searchController = new SearchController();
-
-            System.out.println("Search by name or content? {-name; -content}");
+        while (true) {
+            System.out.println("Chose action. {-search; -unzip}");
             try {
-                userInputSubaction = consoleReader.readLine();
+                userInputAction = consoleReader.readLine();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            if (userInputAction.equals("-search")) {
+                userAction = Actions.SEARCH;
+                searchController = new SearchController();
 
-            if (userInputSubaction.equals("-name")) searchSubaction = SearchSubactions.SEARCHBYNAME;
-            else if (userInputSubaction.equals("-content")) searchSubaction = SearchSubactions.SEARCHBYCONTENT;
-            else System.out.println("Incorrect subaction");
-
-            System.out.println("Enter the paths to SEARCH operation. \n Where do this?");
-            try {
-                userInputPath = consoleReader.readLine();
-                sourceDirectory = new File(userInputPath);
-
-                if (searchSubaction.equals(SearchSubactions.SEARCHBYNAME)) {
-                    System.out.println("Enter the name of source file:");
-                    userInputFileName = consoleReader.readLine();
-                    searchController.searchFileByName(sourceDirectory, userInputFileName);
-                } else if (searchSubaction.equals(SearchSubactions.SEARCHBYCONTENT)) {
-                    System.out.println("Enter content into source file:");
-                    userInputContent = consoleReader.readLine();
-                    searchController.searchFileByContent(sourceDirectory, userInputContent);
+                System.out.println("Search by name or content? {-name; -content}");
+                try {
+                    userInputSubaction = consoleReader.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+
+                if (userInputSubaction.equals("-name")) searchSubaction = SearchSubactions.SEARCHBYNAME;
+                else if (userInputSubaction.equals("-content")) searchSubaction = SearchSubactions.SEARCHBYCONTENT;
+                else System.out.println("Incorrect subaction");
+
+                System.out.println("Enter the paths to SEARCH operation. \n Where do this?");
+                try {
+                    userInputPath = consoleReader.readLine();
+                    sourceDirectory = new File(userInputPath);
+
+                    if (searchSubaction.equals(SearchSubactions.SEARCHBYNAME)) {
+                        System.out.println("Enter the name of source file:");
+                        userInputFileName = consoleReader.readLine();
+                        searchController.searchFileByName(sourceDirectory, userInputFileName);
+                    } else if (searchSubaction.equals(SearchSubactions.SEARCHBYCONTENT)) {
+                        System.out.println("Enter content into source file:");
+                        userInputContent = consoleReader.readLine();
+                        searchController.searchFileByContent(sourceDirectory, userInputContent);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else if (userInputAction.equals("-unzip")) {
+                userAction = Actions.UNZIP;
+                unzippingController = new UnzippingController();
+
+                System.out.println("Enter the path to directory with .zip archives");
+                try {
+                    userInputPath = consoleReader.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("Where to unzip?");
+                try {
+                    userOutputPath = consoleReader.readLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    unzippingController.unzipAllFilesInDirectory(new File(userInputPath), userOutputPath);
+                } catch (IOException e) {
+                    e.getMessage();
+                }
+            } else {
+                System.out.println("Incorrect command");
             }
         }
-
-        else if (userInputAction.equals("-unzip")) {
-            userAction = Actions.UNZIP;
-            unzippingController = new UnzippingController();
-
-            System.out.println("Enter the path to directory with .zip archives");
-            try { String pathToDirWithZipArchives = consoleReader.readLine(); }
-            catch (IOException e) { e.printStackTrace(); }
-        }
-
-
     }
 }
